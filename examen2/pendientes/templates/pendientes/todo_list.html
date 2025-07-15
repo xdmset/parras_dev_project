@@ -1,0 +1,104 @@
+{% extends 'pendientes/base.html' %}
+
+{% block title %}Lista de Pendientes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Lista de Pendientes</h1>
+    
+    <div class="btn-toolbar">
+        <div class="btn-group me-2">
+            <a href="{% url 'sync-todos' %}" class="btn btn-info">
+                <i class="bi bi-arrow-repeat"></i> Sincronizar
+            </a>
+            <a href="{% url 'todo-create' %}" class="btn btn-success">
+                <i class="bi bi-plus-lg"></i> Crear
+            </a>
+        </div>
+        
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-card-list"></i> Listas Específicas
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><h6 class="dropdown-header">Listas Generales</h6></li>
+                <li><a class="dropdown-item" href="{% url 'todo-list-ids' %}">Solo IDs</a></li>
+                <li><a class="dropdown-item" href="{% url 'todo-list-id-title' %}">IDs y Títulos</a></li>
+                <li><a class="dropdown-item" href="{% url 'todo-list-id-userid' %}">IDs y UserIDs</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header">Pendientes Filtrados</h6></li>
+                <li><a class="dropdown-item" href="{% url 'todo-list-unresolved' %}">Sin Resolver (ID y Título)</a></li>
+                <li><a class="dropdown-item" href="{% url 'todo-list-resolved' %}">Resueltos (ID y Título)</a></li>
+                <li><a class="dropdown-item" href="{% url 'todo-list-unresolved-id-userid' %}">Sin Resolver (ID y UserID)</a></li>
+                <li><a class="dropdown-item" href="{% url 'todo-list-resolved-id-userid' %}">Resueltos (ID y UserID)</a></li>
+            </ul>
+        </div>
+    </div>
+    </div>
+
+{% if message %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+<div class="card">
+    <ul class="list-group list-group-flush">
+        {% for todo in todos %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    {% if todo.completed %}
+                        <span class="badge bg-success me-2">Completado</span>
+                        <del>{{ todo.title }}</del>
+                    {% else %}
+                        <span class="badge bg-warning me-2">Pendiente</span>
+                        {{ todo.title }}
+                    {% endif %}
+                    <small class="text-muted d-block">User ID: {{ todo.user_id }}</small>
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="{% url 'todo-detail' todo.pk %}" class="btn btn-outline-secondary btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
+                    <a href="{% url 'todo-update' todo.pk %}" class="btn btn-outline-primary btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+                    <a href="{% url 'todo-delete' todo.pk %}" class="btn btn-outline-danger btn-sm" title="Eliminar"><i class="bi bi-trash"></i></a>
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-center text-muted">No hay pendientes. Prueba a sincronizar con la API.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Navegación de página" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Anterior</span>
+            </li>
+        {% endif %}
+
+        <li class="page-item disabled">
+            <span class="page-link">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Siguiente</span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

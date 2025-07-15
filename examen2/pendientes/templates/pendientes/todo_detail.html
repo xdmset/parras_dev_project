@@ -1,0 +1,35 @@
+{% extends 'pendientes/base.html' %}
+
+{% block title %}Detalle del Pendiente{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Detalle del Pendiente</h3>
+        <a href="{% url 'todo-list' %}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Volver a la lista
+        </a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">{{ object.title }}</h4>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>ID Base de Datos:</strong> {{ object.id }}</li>
+            <li class="list-group-item"><strong>ID de API:</strong> {{ object.api_id }}</li>
+            <li class="list-group-item"><strong>ID de Usuario (API):</strong> {{ object.user_id }}</li>
+            <li class="list-group-item">
+                <strong>Estado:</strong> 
+                {% if object.completed %}
+                    <span class="badge bg-success">Completado</span>
+                {% else %}
+                    <span class="badge bg-warning">Pendiente</span>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+    <div class="card-footer text-end">
+        <a href="{% url 'todo-update' object.pk %}" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+    </div>
+</div>
+{% endblock %}

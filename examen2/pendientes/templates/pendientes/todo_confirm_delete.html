@@ -1,0 +1,26 @@
+{% extends 'pendientes/base.html' %}
+
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card text-center border-danger">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0">Confirmar Eliminación</h3>
+            </div>
+            <div class="card-body">
+                <p class="fs-5">¿Estás seguro de que quieres eliminar este pendiente?</p>
+                <h4 class="fw-normal">"{{ object.title }}"</h4>
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <a href="{% url 'todo-list' %}" class="btn btn-secondary">No, cancelar</a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Sí, eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
