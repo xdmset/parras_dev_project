@@ -15,7 +15,7 @@ def sync_todos_from_api(request):
     API_URL = "https://jsonplaceholder.typicode.com/todos"
     try:
         response = requests.get(API_URL)
-        response.raise_for_status()  # Lanza un error si la petición no fue exitosa
+        response.raise_for_status()  
         data = response.json()
         
         todos_actualizados, todos_creados = 0, 0
@@ -23,13 +23,10 @@ def sync_todos_from_api(request):
         for item in data:
             serializer = TodoSerializer(data=item)
             if serializer.is_valid():
-                # Copiamos los datos validados
                 validated_data = serializer.validated_data
                 
-                # Extraemos el 'api_id' para usarlo en la búsqueda y lo eliminamos del diccionario
                 api_id_lookup = validated_data.pop('api_id')
                 
-                # Ahora 'validated_data' solo contiene la información a guardar/actualizar
                 obj, created = Todo.objects.update_or_create(
                     api_id=api_id_lookup,
                     defaults=validated_data
@@ -40,11 +37,9 @@ def sync_todos_from_api(request):
                 else: 
                     todos_actualizados += 1
             else:
-                # Si esto se imprime, puedes verlo en la consola donde ejecutas 'runserver'
                 print(f"Error de validación para item ID {item.get('id')}: {serializer.errors}")
 
         mensaje = f"Sincronización completa. Pendientes creados: {todos_creados}, actualizados: {todos_actualizados}."
-        # Pasamos el mensaje como un parámetro en la URL
         return redirect(f"{reverse_lazy('todo-list')}?message={mensaje}")
 
     except requests.RequestException as e:

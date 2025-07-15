@@ -35,7 +35,4 @@ class Todo(models.Model):
         return f"ID:{self.api_id} - {self.title}"
 
     def get_absolute_url(self):
-        """
-        Devuelve la URL para ver el detalle de este objeto.
-        """
         return reverse('todo-detail', kwargs={'pk': self.pk})
